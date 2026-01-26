@@ -1,0 +1,9 @@
+Django
+djangorestframework
+pandas
+numpy
+django-cors-headers
+PyQt5
+Pillow
+reportlab
+python-dotenv
