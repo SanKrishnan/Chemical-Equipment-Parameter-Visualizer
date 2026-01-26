@@ -1,0 +1,8 @@
+Django
+Djangorestframework
+pandas
+numpy
+django-cors-headers
+PyOt5
+sqlite3-binary
+Pillow
