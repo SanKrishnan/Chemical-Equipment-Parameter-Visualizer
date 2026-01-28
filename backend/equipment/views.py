@@ -18,15 +18,26 @@ class CSVUploadView(APIView):
             file_path = instance.file.path
             df = pd.read_csv(file_path)
 
-            #Compute summary
+            numeric_cols = ["Flowrate", "Pressure", "Temperature"]
+            for col in numeric_cols:
+                if col in df.columns:
+                    df[col] = pd.to_numeric(df[col], errors="coerce")
+
+            df = df.dropna(subset=numeric_cols)
+
             summary = {
                 "total_count": len(df),
                 "columns": list(df.columns),
-                "avg_flowrate": df["Flowrate"].mean() if "Flowrate" in df else None,
-                "avg_pressure": df["Pressure"].mean() if "Pressure" in df else None,
-                "avg_temperature": df["Temperature"].mean() if "Temperature" in df else None,
+                "avg_flowrate": float(df["Flowrate"].mean()) if "Flowrate" in df else 0,
+                "avg_pressure": float(df["Pressure"].mean()) if "Pressure" in df else 0,
+                "avg_temperature": float(df["Temperature"].mean()) if "Temperature" in df else 0,
                 "type_distribution": df["Type"].value_counts().to_dict() if "Type" in df else {},
             }
+
+            print("DEBUG DF HEAD:\n", df.head())
+            print("DEBUG DF DTYPES:\n", df.dtypes)
+            print("DEBUG SUMMARY:\n", summary)
+
 
             #Save summary
             instance.summary = summary
