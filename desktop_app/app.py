@@ -5,6 +5,7 @@ from PyQt5.QtWidgets import (
     QApplication, QWidget, QVBoxLayout, QPushButton, QFileDialog, QLabel, QTextEdit
 )
 from PyQt5.QtGui import QFont
+from PyQt5.QtCore import Qt
 import matplotlib
 matplotlib.use('Qt5Agg')
 import matplotlib.pyplot as plt
@@ -23,7 +24,9 @@ class DesktopApp(QWidget):
         layout = QVBoxLayout()
 
         self.label = QLabel("Upload CSV File")
-        self.label.setFont(QFont("Arial", 14))
+        self.label.setFont(QFont("Roboto", 14))
+        self.label.setAlignment(Qt.AlignCenter)
+
         layout.addWidget(self.label)
 
         self.upload_button = QPushButton("Choose CSV File")
@@ -96,8 +99,8 @@ class DesktopApp(QWidget):
             avg_keys = list(averages.keys())
             avg_values = [v if v is not None else 0 for v in averages.values()]
 
-            plt.figure(figsize=(6, 4))
-            plt.bar(avg_keys, avg_values)
+            plt.figure(figsize=(4, 5))
+            plt.bar(avg_keys, avg_values, color="orange")
             plt.title("Average Values")
             plt.ylabel("Values")
             plt.show()
