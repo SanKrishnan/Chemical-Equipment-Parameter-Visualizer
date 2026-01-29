@@ -13,6 +13,7 @@ import matplotlib.pyplot as plt
 
 API_URL = "http://127.0.0.1:8000/api/upload/"
 
+TOKEN = None
 
 class DesktopApp(QWidget):
     def __init__(self):
@@ -56,8 +57,9 @@ class DesktopApp(QWidget):
     def send_file_to_api(self, file_path):
         try:
             files = {'file': open(file_path, 'rb')}
-            response = requests.post(API_URL, files=files)
-
+            token=TOKEN
+            headers = {"Authorization": f"Bearer {TOKEN}"}
+            response = requests.post(API_URL, files=files, headers=headers)
             if response.status_code == 200:
                 data = response.json()
                 self.summary = data["summary"]
@@ -107,6 +109,11 @@ class DesktopApp(QWidget):
 
         except Exception as e:
             self.summary_box.append(f"\nChart Error: {str(e)}")
+    
+    def get_token(username, password):
+        data={"username":username, "password":password}
+        response = requests.post("http://127.0.0.1:8000/api/token/", data=data)
+        return response.json().get("access")
 
 
 if __name__ == "__main__":
