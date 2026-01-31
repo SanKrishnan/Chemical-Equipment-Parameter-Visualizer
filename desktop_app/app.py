@@ -1,6 +1,5 @@
 import sys
 import requests
-import pandas as pd
 from PyQt5.QtWidgets import (
     QApplication, QWidget, QVBoxLayout, QPushButton, QFileDialog, QLabel, QTextEdit
 )
@@ -64,6 +63,7 @@ class LoginWindow(QWidget):
             self.label.setText(f"Error: {str(e)}")
 
 
+# ---------------------- MAIN DESKTOP APP ----------------------
 class DesktopApp(QWidget):
     def __init__(self):
         super().__init__()
@@ -71,28 +71,36 @@ class DesktopApp(QWidget):
         self.setWindowTitle("Chemical Equipment Parameter Visualizer - Desktop App")
         self.setGeometry(200, 200, 600, 400)
 
-        layout = QVBoxLayout()
+        self.last_uploaded_id = None
+        self.summary = None
+
+        self.layout = QVBoxLayout()
 
         self.label = QLabel("Upload CSV File")
         self.label.setFont(QFont("Roboto", 14))
         self.label.setAlignment(Qt.AlignCenter)
-        layout.addWidget(self.label)
+        self.layout.addWidget(self.label)
 
         self.upload_button = QPushButton("Choose CSV File")
         self.upload_button.clicked.connect(self.open_file_dialog)
-        layout.addWidget(self.upload_button)
+        self.layout.addWidget(self.upload_button)
 
         self.summary_box = QTextEdit()
         self.summary_box.setReadOnly(True)
-        layout.addWidget(self.summary_box)
+        self.layout.addWidget(self.summary_box)
 
         self.chart_button = QPushButton("Show Charts")
         self.chart_button.clicked.connect(self.show_charts)
         self.chart_button.setEnabled(False)
-        layout.addWidget(self.chart_button)
+        self.layout.addWidget(self.chart_button)
 
-        self.summary = None
-        self.setLayout(layout)
+        # ------------ PDF BUTTON (Correct Location) ------------
+        self.pdf_button = QPushButton("Download PDF Report")
+        self.pdf_button.clicked.connect(self.download_pdf)
+        self.pdf_button.setEnabled(False)
+        self.layout.addWidget(self.pdf_button)
+
+        self.setLayout(self.layout)
 
     def open_file_dialog(self):
         file_path, _ = QFileDialog.getOpenFileName(self, "Select CSV File", "", "CSV Files (*.csv)")
@@ -101,15 +109,20 @@ class DesktopApp(QWidget):
 
     def send_file_to_api(self, file_path):
         try:
-            files = {'file': open(file_path, 'rb')}
+            files = {"file": open(file_path, "rb")}
             headers = {"Authorization": f"Bearer {TOKEN}"}
+
             response = requests.post(API_URL, files=files, headers=headers)
 
             if response.status_code == 200:
                 data = response.json()
                 self.summary = data["summary"]
+                self.last_uploaded_id = data["id"]
+
                 self.summary_box.setText(str(self.summary))
+
                 self.chart_button.setEnabled(True)
+                self.pdf_button.setEnabled(True)
             else:
                 self.summary_box.setText("Error uploading file")
 
@@ -125,11 +138,13 @@ class DesktopApp(QWidget):
             labels = list(self.summary["type_distribution"].keys())
             sizes = list(self.summary["type_distribution"].values())
 
+            # Pie Chart
             plt.figure(figsize=(6, 6))
-            plt.pie(sizes, labels=labels, autopct='%1.2f%%')
+            plt.pie(sizes, labels=labels, autopct="%1.2f%%")
             plt.title("Equipment Type Distribution")
             plt.show()
 
+            # Bar Chart
             avg_values = [
                 self.summary.get("avg_flowrate", 0),
                 self.summary.get("avg_pressure", 0),
@@ -145,14 +160,34 @@ class DesktopApp(QWidget):
         except Exception as e:
             self.summary_box.append(f"\nChart Error: {str(e)}")
 
+    def download_pdf(self):
+        try:
+            if not self.last_uploaded_id:
+                self.summary_box.append("\nNo file ID found.")
+                return
+
+            pdf_url = f"http://127.0.0.1:8000/api/report/{self.last_uploaded_id}/"
+            headers = {"Authorization": f"Bearer {TOKEN}"}
+
+            response = requests.get(pdf_url, headers=headers)
+
+            if response.status_code == 200:
+                filename = f"report_{self.last_uploaded_id}.pdf"
+                with open(filename, "wb") as f:
+                    f.write(response.content)
+
+                self.summary_box.append(f"\nPDF saved as {filename}")
+            else:
+                self.summary_box.append("\nFailed to download PDF")
+
+        except Exception as e:
+            self.summary_box.append(f"\nPDF Error: {str(e)}")
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
 
     login = LoginWindow()
     login.show()
-
-    # Wait until login is closed (token received)
     app.exec_()
 
     window = DesktopApp()
