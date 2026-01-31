@@ -10,10 +10,59 @@ import matplotlib
 matplotlib.use('Qt5Agg')
 import matplotlib.pyplot as plt
 
-
 API_URL = "http://127.0.0.1:8000/api/upload/"
-
 TOKEN = None
+
+
+class LoginWindow(QWidget):
+    def __init__(self):
+        super().__init__()
+        self.setWindowTitle("Login")
+        self.setGeometry(300, 200, 300, 200)
+
+        layout = QVBoxLayout()
+
+        self.label = QLabel("Login to Continue")
+        self.label.setFont(QFont("Segoe UI", 12))
+        self.label.setAlignment(Qt.AlignCenter)
+        layout.addWidget(self.label)
+
+        self.username = QTextEdit()
+        self.username.setPlaceholderText("Username")
+        self.username.setFixedHeight(30)
+        layout.addWidget(self.username)
+
+        self.password = QTextEdit()
+        self.password.setPlaceholderText("Password")
+        self.password.setFixedHeight(30)
+        layout.addWidget(self.password)
+
+        login_btn = QPushButton("Login")
+        login_btn.clicked.connect(self.login_user)
+        layout.addWidget(login_btn)
+
+        self.setLayout(layout)
+
+    def login_user(self):
+        global TOKEN
+        username = self.username.toPlainText().strip()
+        password = self.password.toPlainText().strip()
+
+        try:
+            response = requests.post(
+                "http://127.0.0.1:8000/api/token/",
+                data={"username": username, "password": password}
+            )
+
+            if response.status_code == 200:
+                TOKEN = response.json().get("access")
+                self.close()
+            else:
+                self.label.setText("Invalid username or password")
+
+        except Exception as e:
+            self.label.setText(f"Error: {str(e)}")
+
 
 class DesktopApp(QWidget):
     def __init__(self):
@@ -27,7 +76,6 @@ class DesktopApp(QWidget):
         self.label = QLabel("Upload CSV File")
         self.label.setFont(QFont("Roboto", 14))
         self.label.setAlignment(Qt.AlignCenter)
-
         layout.addWidget(self.label)
 
         self.upload_button = QPushButton("Choose CSV File")
@@ -44,29 +92,24 @@ class DesktopApp(QWidget):
         layout.addWidget(self.chart_button)
 
         self.summary = None
-        self.df = None
-
         self.setLayout(layout)
 
     def open_file_dialog(self):
         file_path, _ = QFileDialog.getOpenFileName(self, "Select CSV File", "", "CSV Files (*.csv)")
-
         if file_path:
             self.send_file_to_api(file_path)
 
     def send_file_to_api(self, file_path):
         try:
             files = {'file': open(file_path, 'rb')}
-            token=TOKEN
             headers = {"Authorization": f"Bearer {TOKEN}"}
             response = requests.post(API_URL, files=files, headers=headers)
+
             if response.status_code == 200:
                 data = response.json()
                 self.summary = data["summary"]
-
                 self.summary_box.setText(str(self.summary))
                 self.chart_button.setEnabled(True)
-
             else:
                 self.summary_box.setText("Error uploading file")
 
@@ -79,45 +122,40 @@ class DesktopApp(QWidget):
             return
 
         try:
-            # PIE CHART
             labels = list(self.summary["type_distribution"].keys())
             sizes = list(self.summary["type_distribution"].values())
 
-            if len(labels) == 0:
-                self.summary_box.append("\nNo type distribution found")
-            else:
-                plt.figure(figsize=(6, 6))
-                plt.pie(sizes, labels=labels, autopct='%1.2f%%')
-                plt.title("Equipment Type Distribution")
-                plt.show()
+            plt.figure(figsize=(6, 6))
+            plt.pie(sizes, labels=labels, autopct='%1.2f%%')
+            plt.title("Equipment Type Distribution")
+            plt.show()
 
-            # BAR CHART
-            averages = {
-                "Flowrate": self.summary.get("avg_flowrate"),
-                "Pressure": self.summary.get("avg_pressure"),
-                "Temperature": self.summary.get("avg_temperature"),
-            }
-
-            avg_keys = list(averages.keys())
-            avg_values = [v if v is not None else 0 for v in averages.values()]
+            avg_values = [
+                self.summary.get("avg_flowrate", 0),
+                self.summary.get("avg_pressure", 0),
+                self.summary.get("avg_temperature", 0),
+            ]
 
             plt.figure(figsize=(4, 5))
-            plt.bar(avg_keys, avg_values, color="orange")
+            plt.bar(["Flowrate", "Pressure", "Temperature"], avg_values, color="orange")
             plt.title("Average Values")
             plt.ylabel("Values")
             plt.show()
 
         except Exception as e:
             self.summary_box.append(f"\nChart Error: {str(e)}")
-    
-    def get_token(username, password):
-        data={"username":username, "password":password}
-        response = requests.post("http://127.0.0.1:8000/api/token/", data=data)
-        return response.json().get("access")
 
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
+
+    login = LoginWindow()
+    login.show()
+
+    # Wait until login is closed (token received)
+    app.exec_()
+
     window = DesktopApp()
     window.show()
+
     sys.exit(app.exec_())
