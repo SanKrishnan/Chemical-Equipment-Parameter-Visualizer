@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
+import "bootstrap-icons/font/bootstrap-icons.css";
 
 function Login({ onLoginSuccess }) {
   const [username, setUsername] = useState("");
@@ -22,15 +23,19 @@ function Login({ onLoginSuccess }) {
   };
 
   return (
-    <div className="d-flex justify-content-center align-items-center" style={{ minHeight: "80vh" }}>
+    <div className="d-flex justify-content-center align-items-center" style={{ minHeight: "65vh" }}>
       <div className="card shadow p-4" style={{ width: "350px" }}>
-        <h3 className="text-center mb-3">Login</h3>
+      <h3 className="text-center mb-4">Login</h3>
 
-        <input type="text" className="form-control mb-3" placeholder="Enter Username" value={username} onChange={(e) => setUsername(e.target.value)}/>
+      <div className="input-group mb-3">
+        <span className="input-group-text"><i className="bi bi-person-fill"></i></span>
+        <input type="text" className="form-control" placeholder="Enter Username" value={username} onChange={(e) => setUsername(e.target.value)}/>
+      </div>
 
-        <input type="password" className="form-control mb-3" placeholder="Enter Password" value={password} onChange={(e) => setPassword(e.target.value)}/>
-
-        <button className="btn btn-primary w-100" onClick={handleLogin}>
+      <div className="input-group mb-3"><span className="input-group-text"><i className="bi bi-lock-fill"></i></span>
+        <input type="password" className="form-control" placeholder="Enter Password" value={password} onChange={(e) => setPassword(e.target.value)}/>
+      </div>
+        <button className="btn btn-primary w-100 ##3185ff" data-toggle="button" onClick={handleLogin}>
           Login
         </button>
       </div>

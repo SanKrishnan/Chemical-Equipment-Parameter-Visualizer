@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
+import "../App.css";
 
 function CSVUploads(csvfile) {
   const [file, setFile] = useState(null);

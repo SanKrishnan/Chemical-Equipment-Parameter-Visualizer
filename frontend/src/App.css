@@ -1,13 +1,15 @@
 .App {
   text-align: center;
 }
-
+/* Login */
 .title {
   text-align: center;
+  padding: 18px;
   margin-top: 20px;
   margin-bottom: 15px;
-  font-size: 36px;
+  font-size: 30px;
   color: #582417;
+
   font-family: 'Trebuchet MS', Arial, sans-serif;
 }
 
@@ -17,7 +19,7 @@
   align-items: center;
   gap: 15px;        
   margin: 15px auto;
-  padding-top: 5px;
+  padding-top: 5px;  
 }
 
 .navigate button {
@@ -67,24 +69,44 @@
     transform: rotate(360deg);
   }
 }
-
+/* CSVUploads file */
 .upload_title{
     text-align: center;
     margin-top: 15px;
     margin-bottom: 20px;
-    font-size: 34px;
+    font-size: 30px;
     color: #582417;
     font-family: 'Trebuchet MS', Arial, sans-serif;
 }
 
 .upload_option{
+    border-radius:2px;
+    justify-content:center;
     color: #582417;
     font-family: 'Trebuchet MS', Arial, sans-serif;
-    font-size: 25px;
+    font-size: 16px;
     margin-bottom: 15px;
     padding:10px;
+    gap:10px;
+}
+
+.summary{
+  font-family:'Times New Roman';
+  font-size:10px;
+}
+
+/* History */
+.upHistory{
+    text-align: center;
+    margin-top: 15px;
+    margin-bottom: 20px;
+    font-size: 30px;
+    color: #582417;
+    font-family: 'Trebuchet MS', Arial, sans-serif;
 }
 body {
   margin: 0;
   padding: 0 20px;
 }
+
+
