@@ -48,14 +48,13 @@ function CSVUploads(csvfile) {
 
   return (
     <div>
-      <h2>Upload Equipment CSV</h2>
-
-      <input type="file" onChange={handleFileChange} />
-
-      <button onClick={handleUpload}>Upload</button>
-
+      <h2 className="upload_title">Upload Equipment CSV</h2>
+      <div className="upload_option">
+        <input type="file" onChange={handleFileChange} />
+        <button onClick={handleUpload}>Upload</button>
+      </div>
       {summary && (
-        <div>
+        <div className="summary">
           <h3>Summary</h3>
           <pre>{JSON.stringify(summary, null, 2)}</pre>
         </div>

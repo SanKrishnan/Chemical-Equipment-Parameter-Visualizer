@@ -1,5 +1,6 @@
 from django.urls import path
-from .views import CSVUploadView, UploadHistoryView
+from .views import CSVUploadView, UploadHistoryView, GeneratePDFView
+
 
 urlpatterns = [
     path('upload/', CSVUploadView.as_view(), name='csv-upload'),
