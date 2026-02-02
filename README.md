@@ -10,7 +10,8 @@ This project integrates the following components:
 - **CSV Upload + Summary Stats + Graphs + PDF Reports**
 
 ---
-
+## Demo Video
+https://drive.google.com/file/d/1URDCB_3-lS4yn-wmLr0kw-ExfEowcZvW/view?usp=drive_link
 ## 📂 Project Architecture
 ```bash
 Chemical-Equipment-Parameter-Visualizer/
