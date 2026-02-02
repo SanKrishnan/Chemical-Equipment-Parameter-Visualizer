@@ -12,6 +12,8 @@ This project integrates the following components:
 ---
 ## Demo Video
 https://drive.google.com/file/d/1URDCB_3-lS4yn-wmLr0kw-ExfEowcZvW/view?usp=drive_link
+
+---
 ## 📂 Project Architecture
 ```bash
 Chemical-Equipment-Parameter-Visualizer/
@@ -179,14 +181,6 @@ To customize save location:
 ``` bash
 pdf_path = filedialog.asksaveasfilename(defaultextension=".pdf")
 ```
-📸 Screenshots
-
-Add screenshots in /assets/ and reference them like:
-
-![Dashboard](assets/dashboard.png)
-![Upload](assets/upload.png)
-![Desktop App](assets/desktop.png)
-![PDF Report](assets/report.png)
 
 ## 👩‍💻 Contributors
 
