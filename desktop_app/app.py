@@ -1,7 +1,7 @@
 import sys
 import requests
 from PyQt5.QtWidgets import (
-    QApplication, QWidget, QVBoxLayout, QPushButton, QFileDialog, QLabel, QTextEdit
+    QApplication, QWidget, QVBoxLayout, QPushButton, QFileDialog, QLabel, QTextEdit,QLineEdit
 )
 from PyQt5.QtGui import QFont
 from PyQt5.QtCore import Qt
@@ -31,8 +31,9 @@ class LoginWindow(QWidget):
         self.username.setFixedHeight(30)
         layout.addWidget(self.username)
 
-        self.password = QTextEdit()
+        self.password = QLineEdit()
         self.password.setPlaceholderText("Password")
+        self.password.setEchoMode(QLineEdit.Password) 
         self.password.setFixedHeight(30)
         layout.addWidget(self.password)
 
@@ -45,7 +46,7 @@ class LoginWindow(QWidget):
     def login_user(self):
         global TOKEN
         username = self.username.toPlainText().strip()
-        password = self.password.toPlainText().strip()
+        password = self.password.text().strip()
 
         try:
             response = requests.post(
@@ -138,23 +139,23 @@ class DesktopApp(QWidget):
             labels = list(self.summary["type_distribution"].keys())
             sizes = list(self.summary["type_distribution"].values())
 
-            # Pie Chart
-            plt.figure(figsize=(6, 6))
-            plt.pie(sizes, labels=labels, autopct="%1.2f%%")
-            plt.title("Equipment Type Distribution")
-            plt.show()
-
-            # Bar Chart
             avg_values = [
                 self.summary.get("avg_flowrate", 0),
                 self.summary.get("avg_pressure", 0),
                 self.summary.get("avg_temperature", 0),
             ]
 
-            plt.figure(figsize=(4, 5))
-            plt.bar(["Flowrate", "Pressure", "Temperature"], avg_values, color="orange")
-            plt.title("Average Values")
-            plt.ylabel("Values")
+            fig, axes = plt.subplots(1, 2, figsize=(10, 5))
+
+            # Pie Chart
+            axes[0].pie(sizes, labels=labels, autopct="%1.1f%%")
+            axes[0].set_title("Equipment Type Distribution")
+
+            # Bar Chart
+            axes[1].bar(["Flowrate", "Pressure", "Temperature"], avg_values, color="orange")
+            axes[1].set_title("Average Values")
+
+            plt.tight_layout()
             plt.show()
 
         except Exception as e:
@@ -172,16 +173,27 @@ class DesktopApp(QWidget):
             response = requests.get(pdf_url, headers=headers)
 
             if response.status_code == 200:
-                filename = f"report_{self.last_uploaded_id}.pdf"
-                with open(filename, "wb") as f:
-                    f.write(response.content)
 
-                self.summary_box.append(f"\nPDF saved as {filename}")
+                save_path, _ = QFileDialog.getSaveFileName(
+                    self,
+                    "Save PDF Report",
+                    f"report_{self.last_uploaded_id}.pdf",
+                    "PDF Files (*.pdf)"
+                )
+
+                if save_path:
+                    with open(save_path, "wb") as f:
+                        f.write(response.content)
+                    self.summary_box.append(f"\nPDF saved at:\n{save_path}")
+                else:
+                    self.summary_box.append("\nSave cancelled.")
+
             else:
                 self.summary_box.append("\nFailed to download PDF")
 
         except Exception as e:
             self.summary_box.append(f"\nPDF Error: {str(e)}")
+
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)

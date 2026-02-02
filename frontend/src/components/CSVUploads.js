@@ -32,13 +32,14 @@ function CSVUploads(csvfile) {
       {
         headers: {
           "Content-Type": "multipart/form-data",
-          "Authorization": `Bearer ${token}`   // <-- IMPORTANT
+          "Authorization": `Bearer ${token}` 
         }
       }
     );
 
     setSummary(response.data.summary);
     csvfile.onSummaryLoad(response.data.summary);
+    csvfile.setPage("dashboard");
 
   } catch (error) {
     console.error(error);
@@ -49,10 +50,13 @@ function CSVUploads(csvfile) {
 
   return (
     <div>
-      <h2 className="d-flex justify-content-center align-items-center" style={{ minHeight: "30vh" }}>Upload Equipment CSV</h2>
-      <div>
+      <h2 className="upload_title">Upload Equipment CSV</h2>
+
+      <div style={{ textAlign: "center", marginTop: "20px" }}>
         <input type="file" onChange={handleFileChange} />
-        <button onClick={handleUpload}>Upload</button>
+        <button style={{ marginLeft: "10px" }} onClick={handleUpload}>
+          Upload
+        </button>
       </div>
       {summary && (
         <div className="summary">
@@ -62,6 +66,7 @@ function CSVUploads(csvfile) {
       )}
     </div>
   );
+
 }
 
 export default CSVUploads;

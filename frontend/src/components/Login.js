@@ -35,9 +35,7 @@ function Login({ onLoginSuccess }) {
       <div className="input-group mb-3"><span className="input-group-text"><i className="bi bi-lock-fill"></i></span>
         <input type="password" className="form-control" placeholder="Enter Password" value={password} onChange={(e) => setPassword(e.target.value)}/>
       </div>
-        <button className="btn btn-primary w-100 ##3185ff" data-toggle="button" onClick={handleLogin}>
-          Login
-        </button>
+        <button type="button" className="btn btn-primary w-100" onClick={handleLogin}>Login</button>
       </div>
     </div>
   );

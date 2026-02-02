@@ -93,6 +93,8 @@
 .summary{
   font-family:'Times New Roman';
   font-size:10px;
+  text-align: center;
+  word-spacing:3px;
 }
 
 /* History */
@@ -103,10 +105,6 @@
     font-size: 30px;
     color: #582417;
     font-family: 'Trebuchet MS', Arial, sans-serif;
-}
-body {
-  margin: 0;
-  padding: 0 20px;
 }
 
 

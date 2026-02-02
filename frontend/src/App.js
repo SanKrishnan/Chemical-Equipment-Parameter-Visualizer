@@ -3,28 +3,37 @@ import CSVUploads from "./components/CSVUploads";
 import Dashboards from "./components/Dashboards";
 import Login from "./components/Login";
 import History from "./components/History";
-import "./App.css";
+
 function App() {
-  const [page, setPage] = useState("login");
   const [summary, setSummary] = useState(null);
+  const [page, setPage] = useState("login");
+
+  const handleLoginSuccess = () => {
+    setPage("upload");
+  };
 
   return (
     <div className="App">
-      
-      <h1 className="title" >Chemical Equipment Parameter Visualizer</h1>
+      <h2 className="upload_title">Upload Equipment CSV</h2>
       <div className="navigate">
-        <button onClick={() => setPage("login")}>Login</button>
-        <button onClick={() => setPage("upload")}>Upload CSV</button>
+        <button onClick={() => setPage("upload")}>Upload</button>
         <button onClick={() => setPage("history")}>History</button>
+        <button onClick={() => setPage("dashboard")}>Dashboard</button>
       </div>
 
-      {page === "login" && <Login />}
+      {page === "login" && <Login onLoginSuccess={handleLoginSuccess} />}
 
       {page === "upload" && (
         <>
-          <CSVUploads onSummaryLoad={setSummary} />
-          <Dashboards summary={summary} />
+          <div style={{ justifyContent: "space-between", alignItems: "flex-start", gap: "40px", padding: "20px"}}>
+            <CSVUploads onSummaryLoad={setSummary} setPage={setPage} />
+            <Dashboards summary={summary} />
+          </div>
         </>
+      )}
+
+      {page === "dashboard" && (
+        <Dashboards summary={summary} />
       )}
 
       {page === "history" && <History />}
@@ -33,3 +42,4 @@ function App() {
 }
 
 export default App;
+
