@@ -7,7 +7,6 @@ import {
   Legend
 } from "chart.js";
 
-// Register required chart elements
 ChartJS.register(ArcElement, Tooltip, Legend);
 
 function Dashboards({ summary }) {
@@ -32,12 +31,23 @@ function Dashboards({ summary }) {
   };
 
   return (
-    <div>
-      <h3>Summary</h3>
-      <pre>{JSON.stringify(summary, null, 2)}</pre>
+    <div style={{ padding: "20px" }}>
+      <h2>Dashboard Summary</h2>
 
-      <h3>Type Distribution</h3>
-      <Pie data={typeData} />
+      <section style={{ marginBottom: "20px" }}>
+        <h3>Summary Data</h3>
+        <pre style={{ background: "#cdcdcd",padding: "12px",borderRadius: "6px", overflowX: "auto",}}>
+          {JSON.stringify(summary, null, 2)}
+        </pre>
+      </section>
+
+      {/* Distribution Chart */}
+      <section>
+        <h3>Type Distribution</h3>
+        <div style={{ width: "350px", margin: "auto" }}>
+          <Pie data={typeData} />
+        </div>
+      </section>
     </div>
   );
 }

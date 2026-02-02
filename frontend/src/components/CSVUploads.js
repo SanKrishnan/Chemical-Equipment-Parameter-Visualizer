@@ -49,8 +49,8 @@ function CSVUploads(csvfile) {
 
   return (
     <div>
-      <h2 className="upload_title">Upload Equipment CSV</h2>
-      <div className="upload_option">
+      <h2 className="d-flex justify-content-center align-items-center" style={{ minHeight: "30vh" }}>Upload Equipment CSV</h2>
+      <div>
         <input type="file" onChange={handleFileChange} />
         <button onClick={handleUpload}>Upload</button>
       </div>

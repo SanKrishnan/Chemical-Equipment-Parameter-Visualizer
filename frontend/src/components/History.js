@@ -36,7 +36,7 @@ function History() {
 
   return (
     <div>
-      <h2 className="d-flex justify-content-center align-items-center #582417" style={{ minHeight: "55vh" }}>Upload History (Last 5 CSV Files)</h2>
+      <h2 className="d-flex justify-content-center align-items-center #582417" style={{ minHeight: "34vh" }}>Upload History (Last 5 CSV Files)</h2>
 
       {error && <p style={{ color: "red" }}>{error}</p>}
 
